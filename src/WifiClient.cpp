@@ -5,6 +5,7 @@
 #include "WifiClient.h"
 #include "Event.h"
 #include "Configuration.h"
+#include "Utils.h"
 #include <ESP8266WiFi.h>
 #include <ArduinoLog.h>
 
@@ -17,7 +18,7 @@ WifiClient::WifiClient() {
 }
 
 void WifiClient::setDefaults() {
-    generateWifiHost();
+    strcat(wifiHost, Utils::getUniqueDeviceId().c_str());
 
 }
 
@@ -50,17 +51,11 @@ void WifiClient::logStatusIfChanged() {
     }
 }
 
-void WifiClient::generateWifiHost() {
-    uint8_t mac[6];
-
-    WiFi.macAddress((uint8_t *) &mac);
-    sprintf(wifiHost, "ZSwitch_%02X.%02X.%02X.%02X.%02X.%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-}
-
 void WifiClient::connect() {
     Log.notice("Connecting host: [%s] ssid: [%s] password: [%s]]\n", wifiHost, Config.fields.wifi_ssid.get().c_str(), Config.fields.wifi_password.get().c_str());
     WiFi.disconnect();
     WiFi.hostname(wifiHost);
+    WiFi.mode(WIFI_STA);
     WiFi.begin(Config.fields.wifi_ssid.get().c_str(), Config.fields.wifi_password.get().c_str());
     connectTimeStart();
 }

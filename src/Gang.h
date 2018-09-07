@@ -11,36 +11,31 @@ enum GangState {
     ON,
     OFF
 };
-enum KeyState {
-    PRESSED,
-    UNPRESSED
-};
+
 
 class Gang {
 private:
     GangState state;
-    std::string name;
+    std::string id;
     uint8_t relayPin;
-    uint8_t keyPin;
-    int currentKeyPinState;
-    int lastKeyPinState;
-
     void setState(GangState state);
-    void onLoop(int eventId, void *data);
-    void checkKeyState();
-    void onKeyStateChange();
+    void publishState();
+    void updateRelay();
+    void onGangToggle(int eventId, void *data);
+    void onSwitchCmd(int eventId, void *data);
+
+
     void toggleState();
-    void turnOn();
-    void turnOff();
-    void turnRelayOn();
-    void turnRelayOff();
+
 
 public:
-    Gang(std::string name, uint8_t relayPin, uint8_t keyPin);
+    Gang(std::string id, uint8_t relayPin);
+    void setId(std::string &id);
 
-    void setName(std::string name);
+    const std::string &getId() const;
+
     void setRelayPin(uint8_t relayPin);
-    void setKeyPin(uint8_t keyPin);
+
 };
 
 

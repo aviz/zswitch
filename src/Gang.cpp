@@ -7,23 +7,27 @@
 #include "Configuration.h"
 #include "Event.h"
 #include "Gang.h"
-#include <time.h>
+#include "Gangs.h"
+#include "SwitchEvent.h"
 
 
-Gang::Gang(std::string name, uint8_t relayPin, uint8_t keyPin) {
-    lastKeyPinState = -1;
-    setName(name);
+Gang::Gang(std::string id, uint8_t relayPin) {
+    setId(id);
     setRelayPin(relayPin);
-    setKeyPin(keyPin);
-    Event::subscribe("Gang::onLoop", ON_LOOP, std::bind(&Gang::onLoop, this, std::placeholders::_1, std::placeholders::_2));
+    Event::subscribe("Gang::onGangToggle", ON_KEY_TOGGLE, std::bind(&Gang::onGangToggle, this, std::placeholders::_1, std::placeholders::_2));
+    Event::subscribe("Gang::onSwitchCmd", ON_SWITCH_CMD, std::bind(&Gang::onSwitchCmd, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void Gang::setState(GangState state) {
     this->state = state;
+    updateRelay();
+    publishState();
 }
 
-void Gang::setName(std::string name) {
-    this->name = name;
+void Gang::setId(std::string &id) {
+    Gangs::remove(this);
+    this->id = id;
+    Gangs::add(this);
 }
 
 void Gang::setRelayPin(uint8_t relayPin) {
@@ -31,51 +35,35 @@ void Gang::setRelayPin(uint8_t relayPin) {
     pinMode(this->relayPin, OUTPUT);
 }
 
-void Gang::setKeyPin(uint8_t keyPin) {
-    this->keyPin = keyPin;
-    pinMode(this->keyPin, INPUT_PULLUP);
+void Gang::toggleState() {
+    (state == ON) ? setState(OFF) : setState(ON);
 }
 
-void Gang::onLoop(int eventId, void *data) {
-    checkKeyState();
+const std::string &Gang::getId() const {
+    return id;
 }
 
-void Gang::checkKeyState() {
-    currentKeyPinState = digitalRead(keyPin);
-    if (currentKeyPinState != lastKeyPinState) {
-        lastKeyPinState = currentKeyPinState;
-        onKeyStateChange();
-    }
+void Gang::publishState() {
+    SwitchEvent switchEvent;
+    switchEvent.setState(this->state);
+    switchEvent.setId(this->id);
+    Event::publish(ON_SWITCH_STATE, (void *)&switchEvent);
 }
 
-void Gang::onKeyStateChange() {
-    Log.notice("Key %s: %d\n", name.c_str(), currentKeyPinState);
-    if (currentKeyPinState == PRESSED) {
+void Gang::onGangToggle(int eventId, void *data) {
+    if(this->id == ((char *)data)) {
         toggleState();
     }
 }
-
-void Gang::toggleState() {
-    (state == ON) ? turnOff() : turnOn();
+void Gang::onSwitchCmd(int eventId, void *data) {
+    auto *switchEvent = (SwitchEvent *)data;
+    if(switchEvent->getId() == this->id) {
+        setState(switchEvent->getState());
+    }
 }
 
-void Gang::turnOn() {
-    setState(ON);
-    Log.notice("%s Turn On\n", name.c_str());
-    turnRelayOn();
-}
-
-void Gang::turnOff() {
-    setState(OFF);
-    Log.notice("%s Turn Off\n", name.c_str());
-    turnRelayOff();
-}
-
-void Gang::turnRelayOn() {
-    digitalWrite(relayPin, HIGH);
-}
-
-void Gang::turnRelayOff() {
-    digitalWrite(relayPin, LOW);
+void Gang::updateRelay() {
+    Log.notice("%s Updating relay %s\n", id.c_str(), this->state == ON ? "ON" : "OFF");
+    digitalWrite(relayPin, (uint8_t) (this->state == ON ? HIGH : LOW));
 }
 

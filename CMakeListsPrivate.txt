@@ -237,6 +237,7 @@ include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif8
 include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS")
 include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src")
 include_directories("$ENV{HOME}/Develop/self/pio/zswitch/.piolibdeps/ArduinoJson_ID64/src")
+include_directories("$ENV{HOME}/Develop/self/pio/zswitch/.piolibdeps/PubSubClient_ID89/src")
 include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA")
 include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src")
 include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM")

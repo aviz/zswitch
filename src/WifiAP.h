@@ -21,8 +21,6 @@ public:
 private:
     std::string ssid;
     std::string password;
-
-    std::string getWifiHost();
 };
 
 

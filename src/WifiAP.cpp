@@ -7,6 +7,7 @@
 #include <ArduinoLog.h>
 #include "Configuration.h"
 #include "Event.h"
+#include "Utils.h"
 
 WifiAP::WifiAP() {
     Event::subscribe("WifiAP::onSetup", ON_SETUP, std::bind(&WifiAP::onSetup, this, std::placeholders::_1, std::placeholders::_2));
@@ -15,7 +16,7 @@ WifiAP::WifiAP() {
 }
 
 void WifiAP::setDefaults() {
-    ssid = getWifiHost();
+    ssid = Utils::getUniqueDeviceId();
 
     // override from config.
     if (Config.fields.ap_ssid.get().length() > 0) {
@@ -39,14 +40,4 @@ void WifiAP::onSetup(int eventId, void *data) {
     IPAddress myIP = WiFi.softAPIP();
 
     Log.notice("AP: [%s] IP: [%s]\n", ssid.c_str(), myIP.toString().c_str());
-}
-
-std::string WifiAP::getWifiHost() {
-    char wifiHost[32] = {0};
-    uint8_t mac[6];
-
-    WiFi.macAddress((uint8_t *) &mac);
-    sprintf(wifiHost, "ZSwitch-%02X.%02X.%02X.%02X.%02X.%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-
-    return std::string(wifiHost);
 }

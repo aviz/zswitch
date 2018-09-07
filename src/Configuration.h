@@ -23,6 +23,8 @@ typedef struct {
     Value<std::string> ap_ssid;
     Value<std::string> wifi_ssid;
     Value<std::string> wifi_password;
+    Value<std::string> mqtt_host;
+    Value<std::string> mqtt_topic;
 } ConfigurationFields;
 
 

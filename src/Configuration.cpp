@@ -19,6 +19,8 @@ void Configuration::onInit(int eventId, void *data) {
     bind("ap_ssid", fields.ap_ssid);
     bind("wifi_ssid", fields.wifi_ssid);
     bind("wifi_password", fields.wifi_password);
+    bind("mqtt_host", fields.mqtt_host);
+    bind("mqtt_topic", fields.mqtt_topic);
     Log.notice("-----------------------------\n");
     Log.notice("      Configuration Init     \n");
     Log.notice("-----------------------------\n");
@@ -59,8 +61,10 @@ void Configuration::initializeValues() {
     fields.version = MAX_VERSION;
     fields.ap_password = "Admin";
     fields.ap_ssid = "admin";
-    fields.wifi_ssid = "defalutssid";
-    fields.wifi_password = "admin";
+    fields.wifi_ssid = "ZrachyaWifi";
+    fields.wifi_password = "19021952";
+    fields.mqtt_host = "192.168.1.10";
+    fields.mqtt_topic = "zhome";
 }
 
 void Configuration::fromJson(JsonObject &json) {

@@ -22,8 +22,6 @@ private:
     time_t timeConnected;
     uint8_t lastStatus;
 
-
-    void generateWifiHost();
     void connect();
     bool connected();
     time_t connectTimeElapsed();
