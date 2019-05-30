@@ -23,6 +23,10 @@ void WebServer::onSetup(int eventId, void *data) {
         WebServer::getInstance().onHandleSetVar();
     });
 
+    server.on("/key/toggle/1", HTTP_POST, [](){
+                Event::publish(ON_KEY_TOGGLE, (void *)"1");
+    });
+
     server.serveStatic("/index.htm", SPIFFS, "/index.htm");
     server.serveStatic("/fonts", SPIFFS, "/fonts", "max-age=86400");
     server.serveStatic("/js", SPIFFS, "/js");
