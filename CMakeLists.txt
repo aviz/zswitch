@@ -52,3 +52,4 @@ add_custom_target(
 )
 
 add_executable(${PROJECT_NAME} ${SRC_LIST} src/Gang.cpp src/Gang.h src/WifiLedIndicator.cpp src/WifiLedIndicator.h src/Settings.h src/Key.cpp src/Key.h src/Gangs.cpp src/Gangs.h src/MQTT.cpp src/MQTT.h src/Utils.cpp src/Utils.h src/SwitchEvent.cpp src/SwitchEvent.h)
+
